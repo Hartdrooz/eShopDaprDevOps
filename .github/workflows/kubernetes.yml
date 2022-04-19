@@ -40,9 +40,8 @@ jobs:
 
       - name: Install Dapr
         run: |
-          # Validate if Dapr is already installed
-          daprInstalled=$(kubectl get ns | grep dapr-system)
-          [ -z "$daprInstalled" ] && dapr init -k --enable-ha=true --wait --timeout 600
+          # Validate if Dapr is already installed          
+          dapr init -k --enable-ha=true --wait --timeout 600
 
   # # Deploy database, service bus etc.
   # deploy-core-services:     
