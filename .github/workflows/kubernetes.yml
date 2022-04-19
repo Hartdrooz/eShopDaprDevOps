@@ -9,19 +9,19 @@ env:
 
 jobs:
   
-  configure-acr:
-    runs-on: self-hosted
+  # configure-acr:
+  #   runs-on: self-hosted
 
-    steps:
+  #   steps:
 
-      - name: Azure Login
-        uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Azure Login
+  #       uses: Azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Attach ACR
-        run: |
-          az aks update -n ${{ secrets.AKS_NAME }} -g ${{ env.RESOURCE_GROUP_NAME }} --attach-acr ${{ secrets.ACR_SHORTNAME }}
+  #     - name: Attach ACR
+  #       run: |
+  #         az aks update -n ${{ secrets.AKS_NAME }} -g ${{ env.RESOURCE_GROUP_NAME }} --attach-acr ${{ secrets.ACR_SHORTNAME }}
 
   create-namespace-eshop:
     runs-on: self-hosted
@@ -44,34 +44,31 @@ jobs:
           daprInstalled=$(kubectl get ns | grep dapr-system)
           if [ -z "$daprInstalled" ]
           then
-            helm repo add dapr https://dapr.github.io/helm-charts/
-            helm repo update
-            helm upgrade --install dapr dapr/dapr --version=1.7 --namespace dapr-system --create-namespace --set global.ha.enabled=true --wait
-           # dapr init -k --enable-ha=true --wait --timeout 600
+            # dapr init -k --enable-ha=true --wait --timeout 600
           fi
 
   # # Deploy database, service bus etc.
-  deploy-core-services:     
-    needs: [create-namespace-eshop,configure-acr]
-    uses: ./.github/workflows/deploy-container-cd.yml    
-    with:      
-      kustomize-input-directory: deploy/k8s/kustomize/core/base
-      kustomize-output-file: deploy/k8s/kustomize/core/base/core.yml
-    secrets:      
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      AKS_NAME: ${{ secrets.AKS_NAME }}
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
+  # deploy-core-services:     
+  #   needs: [create-namespace-eshop,configure-acr]
+  #   uses: ./.github/workflows/deploy-container-cd.yml    
+  #   with:      
+  #     kustomize-input-directory: deploy/k8s/kustomize/core/base
+  #     kustomize-output-file: deploy/k8s/kustomize/core/base/core.yml
+  #   secrets:      
+  #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  #     AKS_NAME: ${{ secrets.AKS_NAME }}
+  #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
 
-  deploy-dapr-components:     
-    needs: [create-namespace-eshop,configure-acr]
-    uses: ./.github/workflows/deploy-container-cd.yml    
-    with:      
-      kustomize-input-directory: deploy/k8s/kustomize/dapr/base
-      kustomize-output-file: deploy/k8s/kustomize/dapr/base/dapr.yml
-    secrets:      
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      AKS_NAME: ${{ secrets.AKS_NAME }}
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
+  # deploy-dapr-components:     
+  #   needs: [create-namespace-eshop,configure-acr]
+  #   uses: ./.github/workflows/deploy-container-cd.yml    
+  #   with:      
+  #     kustomize-input-directory: deploy/k8s/kustomize/dapr/base
+  #     kustomize-output-file: deploy/k8s/kustomize/dapr/base/dapr.yml
+  #   secrets:      
+  #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  #     AKS_NAME: ${{ secrets.AKS_NAME }}
+  #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
 
 
         
