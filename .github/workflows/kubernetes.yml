@@ -40,8 +40,13 @@ jobs:
 
       - name: Install Dapr
         run: |
-          # Validate if Dapr is already installed          
-          dapr init -k --enable-ha=true --wait --timeout 600
+          # Validate if Dapr is already installed
+          try {
+            dapr init -k --enable-ha=true --wait --timeout 600
+          }
+          catch {
+          }
+        shell: pwsh
 
   # # Deploy database, service bus etc.
   # deploy-core-services:     
